@@ -3,13 +3,7 @@ import { useEffect, useState, lazy, Suspense } from "react";
 
 const App = lazy(() => import("../App.jsx"));
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "תזכורת תרופות" },
-      { name: "description", content: "אפליקציית תזכורות תרופות עם זיהוי מרשמים בתמונה והתראות דחיפה." },
-    ],
-  }),
+export const Route = createFileRoute("/$")({
   component: ClientApp,
 });
 
