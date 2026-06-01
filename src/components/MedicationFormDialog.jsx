@@ -58,6 +58,14 @@ export default function MedicationFormDialog({ open, onClose, initial }) {
             helperText={errors.name?.message}
           />
           <TextField
+            label="מינון (לדוגמה: 2 כדורים)"
+            {...register("dosage", {
+              maxLength: { value: 100, message: "מינון עד 100 תווים" },
+            })}
+            error={!!errors.dosage}
+            helperText={errors.dosage?.message}
+          />
+          <TextField
             label="מנות ביום"
             type="number"
             inputProps={{ min: 1 }}
