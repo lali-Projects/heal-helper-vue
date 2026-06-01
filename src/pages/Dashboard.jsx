@@ -43,7 +43,7 @@ export default function Dashboard() {
         </Box>
 
         <Typography className="section-title">העלאת מרשם / תמונת תרופה</Typography>
-        <ImageAnalyzeUploader />
+        <ImageAnalyzeUploader onAnalyzed={(prefill) => { setEditing(prefill); setDialogOpen(true); }} />
 
         <Typography className="section-title">התרופות שלי</Typography>
 
