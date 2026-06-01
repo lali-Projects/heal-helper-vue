@@ -1,0 +1,81 @@
+@use "./variables" as *;
+@use "./mixins" as *;
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: "Heebo", "Rubik", "Segoe UI", Tahoma, sans-serif;
+  background: $color-bg;
+  color: $color-text;
+  direction: rtl;
+}
+
+a { color: $color-secondary; text-decoration: none; }
+
+.app-container {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: $space-lg;
+}
+
+.auth-page { @include centered-page; }
+
+.auth-card {
+  @include card;
+  width: 100%;
+  max-width: 440px;
+  padding: $space-2xl;
+}
+
+.medication-grid { @include responsive-grid(280px, $space-lg); }
+
+.med-card {
+  @include card;
+  @include flex(column, flex-start, stretch, $space-sm);
+}
+
+.navbar {
+  @include flex(row, space-between, center);
+  height: $navbar-height;
+  padding: 0 $space-lg;
+  background: $color-surface;
+  border-bottom: 1px solid $color-border;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: $shadow-card;
+}
+
+.brand {
+  @include flex(row, flex-start, center, $space-sm);
+  font-weight: 700;
+  font-size: 20px;
+  color: $color-primary-dark;
+}
+
+.upload-dropzone {
+  border: 2px dashed $color-primary;
+  border-radius: $radius-lg;
+  padding: $space-xl;
+  text-align: center;
+  background: rgba(13, 148, 136, 0.04);
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover, &.drag-over { background: rgba(13, 148, 136, 0.1); }
+}
+
+.section-title {
+  margin: $space-xl 0 $space-md;
+  font-size: 22px;
+  font-weight: 700;
+  color: $color-text;
+}
+
+.empty-state {
+  text-align: center;
+  color: $color-muted;
+  padding: $space-2xl;
+}
