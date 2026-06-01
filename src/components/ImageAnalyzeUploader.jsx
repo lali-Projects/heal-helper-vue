@@ -1,33 +1,28 @@
 import { useRef, useState } from "react";
 import { Box, Typography, CircularProgress, Button } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useAnalyzeMedicationImageMutation, useCreateMedicationMutation } from "../features/apiSlice";
-import { useSelector } from "react-redux";
-import { selectUser } from "../features/auth/authSlice";
+import { useAnalyzeMedicationImageMutation } from "../features/apiSlice";
 
 export default function ImageAnalyzeUploader({ onAnalyzed }) {
   const inputRef = useRef(null);
   const [dragOver, setDragOver] = useState(false);
   const [preview, setPreview] = useState(null);
   const [analyze, { isLoading }] = useAnalyzeMedicationImageMutation();
-  const [createMed, { isLoading: creating }] = useCreateMedicationMutation();
-  const user = useSelector(selectUser);
 
   const handleFile = async (file) => {
     if (!file) return;
     setPreview(URL.createObjectURL(file));
     try {
-      const dto = await analyze(file).unwrap(); // { name, dosagePerDay, endDate }
-      // Auto-create medication for the logged-in user
-      const payload = {
-        name: dto.name,
-        dosagePerDay: dto.dosagePerDay,
-        endDate: dto.endDate,
+      const dto = await analyze(file).unwrap();
+      // Map backend DTO -> form initial values
+      const prefill = {
+        name: dto.medicine_name || "",
+        dosage: dto.dosage || "",
+        dosagePerDay: Number(dto.frequency) || 1,
+        endDate: dto.endDate || "",
         fixedSchedule: false,
-        user: { id: user.id },
       };
-      await createMed(payload).unwrap();
-      onAnalyzed?.(dto);
+      onAnalyzed?.(prefill);
     } catch (e) {
       alert(`ניתוח התמונה נכשל: ${e?.data?.message || e.message || "שגיאה"}`);
     }
@@ -43,7 +38,7 @@ export default function ImageAnalyzeUploader({ onAnalyzed }) {
   return (
     <Box
       className={`upload-dropzone ${dragOver ? "drag-over" : ""}`}
-      onClick={() => inputRef.current?.click()}
+      onClick={() => !isLoading && inputRef.current?.click()}
       onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
       onDragLeave={() => setDragOver(false)}
       onDrop={onDrop}
@@ -55,7 +50,7 @@ export default function ImageAnalyzeUploader({ onAnalyzed }) {
         hidden
         onChange={(e) => handleFile(e.target.files?.[0])}
       />
-      {isLoading || creating ? (
+      {isLoading ? (
         <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
           <CircularProgress />
           <Typography>מנתח תמונה...</Typography>
