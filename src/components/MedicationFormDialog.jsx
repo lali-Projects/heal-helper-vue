@@ -13,13 +13,14 @@ export default function MedicationFormDialog({ open, onClose, initial }) {
   const today = new Date().toISOString().slice(0, 10);
 
   const { control, register, handleSubmit, reset, formState: { errors } } = useForm({
-    defaultValues: { name: "", dosagePerDay: 1, endDate: "", fixedSchedule: false },
+    defaultValues: { name: "", dosage: "", dosagePerDay: 1, endDate: "", fixedSchedule: false },
   });
 
   useEffect(() => {
     if (open) {
       reset({
         name: initial?.name || "",
+        dosage: initial?.dosage || "",
         dosagePerDay: initial?.dosagePerDay || 1,
         endDate: initial?.endDate || "",
         fixedSchedule: initial?.fixedSchedule || false,
@@ -30,6 +31,7 @@ export default function MedicationFormDialog({ open, onClose, initial }) {
   const onSubmit = async (values) => {
     const payload = {
       name: values.name,
+      dosage: values.dosage,
       dosagePerDay: Number(values.dosagePerDay),
       endDate: values.endDate,
       fixedSchedule: values.fixedSchedule,
