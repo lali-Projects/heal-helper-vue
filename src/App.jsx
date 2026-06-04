@@ -50,26 +50,21 @@
 // }
 
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import { CacheProvider } from "@emotion/react";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { store } from "./app/store";
 import { rtlCache } from "./app/rtlCache";
 import { theme } from "./app/theme";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import About from "./pages/About";
+import MainLayout from "./components/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./styles/globals.scss";
-
-function RedirectToHome() {
-  const navigate = useNavigate();
-  useEffect(() => {
-    navigate("/", { replace: true });
-  }, [navigate]);
-  return null;
-}
 
 function ServiceWorkerBootstrap() {
   useEffect(() => {
@@ -77,9 +72,8 @@ function ServiceWorkerBootstrap() {
       const registerSW = () => {
         navigator.serviceWorker.register("/sw.js").catch(() => {});
       };
-      if (document.readyState === "complete") {
-        registerSW();
-      } else {
+      if (document.readyState === "complete") registerSW();
+      else {
         window.addEventListener("load", registerSW);
         return () => window.removeEventListener("load", registerSW);
       }
@@ -97,17 +91,20 @@ export default function App() {
           <ServiceWorkerBootstrap />
           <BrowserRouter>
             <Routes>
+              <Route path="/" element={<Landing />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route
-                path="/"
                 element={
                   <ProtectedRoute>
-                    <Dashboard />
+                    <MainLayout />
                   </ProtectedRoute>
                 }
-              />
-              <Route path="*" element={<RedirectToHome />} />
+              >
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/about" element={<About />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </ThemeProvider>

@@ -25,7 +25,7 @@ export default function Login() {
       dispatch(setCredentials({ token, email }));
       const user = await fetchUser(email).unwrap();
       dispatch(setUser(user));
-      const to = location.state?.from?.pathname || "/";
+      const to = location.state?.from?.pathname || "/dashboard";
       navigate(to, { replace: true });
     } catch (e) {
       setServerError(e?.data || e?.error || "התחברות נכשלה. בדוק את הפרטים ונסה שוב.");

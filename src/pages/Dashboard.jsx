@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Button, Typography, CircularProgress, Alert } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import Navbar from "../components/Navbar";
 import MedicationCard from "../components/MedicationCard";
 import MedicationFormDialog from "../components/MedicationFormDialog";
 import ImageAnalyzeUploader from "../components/ImageAnalyzeUploader";
@@ -30,14 +29,13 @@ export default function Dashboard() {
 
   return (
     <>
-      <Navbar />
       <div className="app-container">
-        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mt={2} flexWrap="wrap" gap={2}>
           <Box>
-            <Typography variant="h4">שלום {user?.name}</Typography>
+            <Typography variant="h4">שלום {user?.name} 👋</Typography>
             <Typography color="text.secondary">ניהול תזכורות התרופות שלך</Typography>
           </Box>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate}>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openCreate} size="large">
             הוספת תרופה
           </Button>
         </Box>

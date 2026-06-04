@@ -5,6 +5,6 @@ import { selectToken } from "../features/auth/authSlice";
 export default function ProtectedRoute({ children }) {
   const token = useSelector(selectToken);
   const location = useLocation();
-  if (!token) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!token) return <Navigate to="/" state={{ from: location }} replace />;
   return children;
 }
