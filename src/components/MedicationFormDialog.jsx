@@ -16,31 +16,46 @@ export default function MedicationFormDialog({ open, onClose, initial }) {
     defaultValues: { name: "", dosage: "", dosagePerDay: 1, endDate: "", fixedSchedule: false },
   });
 
-  useEffect(() => {
-    if (open) {
-      reset({
-        name: initial?.name || "",
-        dosage: initial?.dosage || "",
-        dosagePerDay: initial?.dosagePerDay || 1,
-        endDate: initial?.endDate || "",
-        fixedSchedule: initial?.fixedSchedule || false,
-      });
-    }
-  }, [open, initial, reset]);
+useEffect(() => {
+  if (open) {
+    reset({
+      // אם קיים medicine_name (מהשרת), נשתמש בו, אחרת ב-name (מעריכה רגילה)
+      name: initial?.medicine_name || initial?.name || "",
+      
+      dosage: initial?.dosage || "",
+      
+      // אם קיים frequency (מהשרת), נשתמש בו, אחרת ב-dosagePerDay (מעריכה רגילה)
+      dosagePerDay: initial?.frequency || initial?.dosagePerDay || 1,
+      
+      endDate: initial?.endDate || "",
+      
+      fixedSchedule: initial?.fixedSchedule || false,
+    });
+  }
+}, [open, initial, reset]);
 
   const onSubmit = async (values) => {
-    const payload = {
-      name: values.name,
-      dosage: values.dosage,
-      dosagePerDay: Number(values.dosagePerDay),
-      endDate: values.endDate,
-      fixedSchedule: values.fixedSchedule,
-      user: { id: user.id },
-    };
-    if (initial?.id) await updateMed({ id: initial.id, body: payload }).unwrap();
-    else await createMed(payload).unwrap();
-    onClose();
+  const payload = {
+    name: values.name,
+    dosage: values.dosage,
+    frequency: Number(values.dosagePerDay), 
+    endDate: values.endDate,
+    fixedSchedule: values.fixedSchedule,
+    user: { id: user.id },
   };
+
+  try {
+    if (initial?.id) {
+      await updateMed({ id: initial.id, body: payload }).unwrap();
+    } else {
+      await createMed(payload).unwrap();
+    }
+    onClose();
+  } catch (error) {
+    console.error("Failed to save medication:", error);
+    alert(error?.data?.message || "שגיאה בשמירת התרופה");
+  }
+};
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl">
