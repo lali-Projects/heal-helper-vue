@@ -21,6 +21,29 @@ function arrayBufferToBase64(buffer) {
   return btoa(bin);
 }
 
+export async function getPushTokens() {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    throw new Error("Push notifications are not supported in this browser");
+  }
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") throw new Error("Permission denied");
+
+  const registration = await navigator.serviceWorker.ready;
+  const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    ...(vapidKey ? { applicationServerKey: urlBase64ToUint8Array(vapidKey) } : {}),
+  });
+
+  const p256dh = subscription.getKey("p256dh");
+  const auth = subscription.getKey("auth");
+  return {
+    pushEndpoint: subscription.endpoint,
+    pushP256dh: p256dh ? arrayBufferToBase64(p256dh) : null,
+    pushAuth: auth ? arrayBufferToBase64(auth) : null,
+  };
+}
+
 export function useNotification() {
   const email = useSelector(selectEmail);
   const user = useSelector(selectUser);
@@ -28,34 +51,11 @@ export function useNotification() {
   const [updateUser] = useUpdateUserByEmailMutation();
 
   const subscribe = useCallback(async () => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-      throw new Error("Push notifications are not supported in this browser");
-    }
     if (!email || !user || !token) throw new Error("User not authenticated");
-
-    const permission = await Notification.requestPermission();
-    if (permission !== "granted") throw new Error("Permission denied");
-
-    const registration = await navigator.serviceWorker.ready;
-
-    const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      ...(vapidKey ? { applicationServerKey: urlBase64ToUint8Array(vapidKey) } : {}),
-    });
-
-    const p256dh = subscription.getKey("p256dh");
-    const auth = subscription.getKey("auth");
-
-    const body = {
-      ...user,
-      pushEndpoint: subscription.endpoint,
-      pushP256dh: p256dh ? arrayBufferToBase64(p256dh) : null,
-      pushAuth: auth ? arrayBufferToBase64(auth) : null,
-    };
-
+    const tokens = await getPushTokens();
+    const body = { ...user, ...tokens };
     await updateUser({ email, body }).unwrap();
-    return subscription;
+    return tokens;
   }, [email, user, token, updateUser]);
 
   return { subscribe };
