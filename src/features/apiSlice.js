@@ -91,6 +91,10 @@ export const apiSlice = createApi({
       query: (body) => ({ url: "/medication-schedules", method: "POST", body }),
       invalidatesTags: [{ type: "Schedule", id: "LIST" }],
     }),
+    createMedicationSchedule: builder.mutation({
+      query: (body) => ({ url: "/medication-schedules", method: "POST", body }),
+      invalidatesTags: [{ type: "Schedule", id: "LIST" }],
+    }),
     updateSchedule: builder.mutation({
       query: ({ id, body }) => ({
         url: `/medication-schedules/${id}`,
@@ -122,6 +126,7 @@ export const {
   useAnalyzeMedicationImageMutation,
   useGetSchedulesByUserQuery,
   useCreateScheduleMutation,
+  useCreateMedicationScheduleMutation,
   useUpdateScheduleMutation,
   useDeleteScheduleMutation,
 } = apiSlice;
