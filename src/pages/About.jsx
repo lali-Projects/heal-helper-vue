@@ -28,7 +28,7 @@ export default function About() {
 
       <Grid container spacing={3}>
         {items.map((it) => (
-          <Grid item xs={12} sm={6} md={4} key={it.title}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={it.title}>
             <Card sx={{ height: "100%", transition: "transform .2s, box-shadow .2s", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 18px 36px rgba(15,23,42,.10)" } }}>
               <CardContent>
                 <Stack direction="row" spacing={2} alignItems="flex-start">

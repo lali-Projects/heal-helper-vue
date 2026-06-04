@@ -39,7 +39,7 @@ export default function Landing() {
       {/* Hero */}
       <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: { xs: 6, md: 10 } }}>
         <Grid container spacing={6} alignItems="center">
-          <Grid item xs={12} md={7}>
+          <Grid size={{ xs: 12, md: 7 }}>
             <Chip
               icon={<HealthAndSafetyIcon />}
               label="פלטפורמת בריאות חכמה"
@@ -65,7 +65,7 @@ export default function Landing() {
               </Button>
             </Stack>
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <Box
               sx={{
                 position: "relative",
@@ -103,7 +103,7 @@ export default function Landing() {
           <Typography align="center" color="text.secondary" sx={{ mb: 6 }}>כל מה שצריך כדי לנהל בריאות — במקום אחד.</Typography>
           <Grid container spacing={3}>
             {features.map((f) => (
-              <Grid item xs={12} sm={6} md={3} key={f.title}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={f.title}>
                 <Card sx={{ height: "100%", p: 1, transition: "transform .2s, box-shadow .2s", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 18px 36px rgba(15,23,42,.10)" } }}>
                   <CardContent>
                     <Box sx={{ width: 48, height: 48, borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(13,148,136,.1)", color: "primary.dark", mb: 2 }}>
