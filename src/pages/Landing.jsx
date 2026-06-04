@@ -2,12 +2,12 @@ import { Box, Button, Container, Typography, Grid, Card, CardContent, Stack, Chi
 import { Link, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectToken } from "../features/auth/authSlice";
-import MedicationLiquidIcon from "@mui/icons-material/MedicationLiquid";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { BrandLogo } from "../components/Navbar";
 
 const features = [
   { icon: <PhotoCameraIcon />, title: "סריקת מרשם חכמה", desc: "צילום של אריזת תרופה או מרשם — וה‑AI ימלא עבורך את הפרטים." },
@@ -21,15 +21,18 @@ export default function Landing() {
   if (token) return <Navigate to="/dashboard" replace />;
 
   return (
-    <Box sx={{ minHeight: "100vh", background: "linear-gradient(180deg,#ecfeff 0%,#f6fafb 40%,#ffffff 100%)" }}>
+    <Box sx={{
+      minHeight: "100vh",
+      background: `
+        radial-gradient(900px 500px at 100% 0%, rgba(16,185,129,0.18), transparent 60%),
+        radial-gradient(800px 500px at 0% 10%, rgba(8,145,178,0.14), transparent 60%),
+        linear-gradient(180deg,#f0fdf4 0%,#f8fafc 50%,#ecfeff 100%)
+      `,
+    }}>
       {/* Top bar */}
-      <Box sx={{ py: 2, px: { xs: 2, md: 6 }, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Stack direction="row" spacing={1.2} alignItems="center">
-          <Box sx={{ p: 1, borderRadius: 2, background: "linear-gradient(135deg,#0d9488,#14b8a6)", color: "#fff", display: "flex" }}>
-            <MedicationLiquidIcon />
-          </Box>
-          <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.dark" }}>תזכורת תרופות</Typography>
-        </Stack>
+      <Box sx={{ py: 2.5, px: { xs: 2, md: 6 }, display: "flex", justifyContent: "space-between", alignItems: "center",
+        backdropFilter: "blur(8px)", background: "rgba(255,255,255,.5)", borderBottom: "1px solid rgba(15,23,42,.05)" }}>
+        <BrandLogo />
         <Stack direction="row" spacing={1.5}>
           <Button component={Link} to="/login" variant="text" color="primary">התחברות</Button>
           <Button component={Link} to="/register" variant="contained">הרשמה</Button>
