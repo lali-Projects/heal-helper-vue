@@ -126,6 +126,7 @@ export const {
   useAnalyzeMedicationImageMutation,
   useGetSchedulesByUserQuery,
   useCreateScheduleMutation,
+  useCreateMedicationScheduleMutation,
   useUpdateScheduleMutation,
   useDeleteScheduleMutation,
 } = apiSlice;
