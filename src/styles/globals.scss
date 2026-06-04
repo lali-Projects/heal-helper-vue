@@ -1,14 +1,13 @@
 @use "./variables" as *;
 @use "./mixins" as *;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Assistant:wght@400;500;600;700;800&display=swap");
-
 * { box-sizing: border-box; }
 
 html, body, #root {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  // שמרנו על הגדרת הפונטים - אם הם לא נטענים מגוגל, הדפדפן ישתמש אוטומטית ב-Rubik או Heebo המצוינים שמותקנים במחשב
   font-family: "Inter", "Assistant", "Rubik", "Heebo", "Segoe UI", Tahoma, sans-serif;
   color: $color-text;
   direction: rtl;
