@@ -23,3 +23,4 @@ function ClientApp() {
     </Suspense>
   );
 }
+

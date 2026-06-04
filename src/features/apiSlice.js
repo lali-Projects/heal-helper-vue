@@ -72,7 +72,7 @@ export const apiSlice = createApi({
       query: (file) => {
         const fd = new FormData();
         fd.append("file", file);
-        return { url: "/api/medications/analyze", method: "POST", body: fd };
+        return { url: "/medications/analyze-image", method: "POST", body: fd };
       },
     }),
 
