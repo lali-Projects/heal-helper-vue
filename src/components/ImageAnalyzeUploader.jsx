@@ -70,27 +70,34 @@ export default function ImageAnalyzeUploader({ onAnalyzed }) {
         <Typography>מנתח תמונה...</Typography>
       </Box>
     ) : (
-      <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
-        <CloudUploadIcon color="primary" sx={{ fontSize: 48 }} />
-        <Typography variant="h6">העלאת תמונת מרשם</Typography>
-        <Typography variant="body2" color="text.secondary">
-          לחץ או גרור תמונה לכאן כדי לזהות אוטומטית את פרטי התרופה
+      <Box display="flex" flexDirection="column" alignItems="center" gap={1.2}>
+        <Box sx={{
+          width: 72, height: 72, borderRadius: "50%",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "linear-gradient(135deg, rgba(16,185,129,.16), rgba(8,145,178,.12))",
+          color: "#047857", mb: 1,
+          boxShadow: "0 10px 28px -10px rgba(16,185,129,.5)",
+        }}>
+          <CloudUploadIcon sx={{ fontSize: 38 }} />
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 800 }}>גרור תמונת מרשם לכאן</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 360 }}>
+          או לחץ לבחור קובץ. ה‑AI יזהה אוטומטית את שם התרופה, המינון, התדירות ותאריך הסיום.
         </Typography>
         {preview && (
-          <img 
-            src={preview} 
-            alt="preview" 
-            style={{ maxWidth: 180, marginTop: 8, borderRadius: 8 }} 
-            onClick={(e) => e.stopPropagation()} // מונע פתיחה מחדש של חלונית הקבצים בלחיצה על התמונה
+          <img
+            src={preview}
+            alt="preview"
+            style={{ maxWidth: 180, marginTop: 8, borderRadius: 12, boxShadow: "0 8px 24px rgba(15,23,42,.12)" }}
+            onClick={(e) => e.stopPropagation()}
           />
         )}
-        <Button 
-          size="small" 
-          sx={{ mt: 1 }} 
-          variant="outlined"
+        <Button
+          size="medium"
+          sx={{ mt: 1.5 }}
+          variant="contained"
           onClick={(e) => {
-            // קריטי ביותר: מונע מהכפתור להפעיל גם את ה-onClick של ה-Box ועוצר את הכפילות!
-            e.stopPropagation(); 
+            e.stopPropagation();
             if (!isLoading) inputRef.current?.click();
           }}
         >

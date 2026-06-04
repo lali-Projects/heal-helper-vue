@@ -2,12 +2,12 @@ import { Box, Button, Container, Typography, Grid, Card, CardContent, Stack, Chi
 import { Link, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectToken } from "../features/auth/authSlice";
-import MedicationLiquidIcon from "@mui/icons-material/MedicationLiquid";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import { BrandLogo } from "../components/Navbar";
 
 const features = [
   { icon: <PhotoCameraIcon />, title: "סריקת מרשם חכמה", desc: "צילום של אריזת תרופה או מרשם — וה‑AI ימלא עבורך את הפרטים." },
@@ -21,15 +21,18 @@ export default function Landing() {
   if (token) return <Navigate to="/dashboard" replace />;
 
   return (
-    <Box sx={{ minHeight: "100vh", background: "linear-gradient(180deg,#ecfeff 0%,#f6fafb 40%,#ffffff 100%)" }}>
+    <Box sx={{
+      minHeight: "100vh",
+      background: `
+        radial-gradient(900px 500px at 100% 0%, rgba(16,185,129,0.18), transparent 60%),
+        radial-gradient(800px 500px at 0% 10%, rgba(8,145,178,0.14), transparent 60%),
+        linear-gradient(180deg,#f0fdf4 0%,#f8fafc 50%,#ecfeff 100%)
+      `,
+    }}>
       {/* Top bar */}
-      <Box sx={{ py: 2, px: { xs: 2, md: 6 }, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Stack direction="row" spacing={1.2} alignItems="center">
-          <Box sx={{ p: 1, borderRadius: 2, background: "linear-gradient(135deg,#0d9488,#14b8a6)", color: "#fff", display: "flex" }}>
-            <MedicationLiquidIcon />
-          </Box>
-          <Typography variant="h6" sx={{ fontWeight: 800, color: "primary.dark" }}>תזכורת תרופות</Typography>
-        </Stack>
+      <Box sx={{ py: 2.5, px: { xs: 2, md: 6 }, display: "flex", justifyContent: "space-between", alignItems: "center",
+        backdropFilter: "blur(8px)", background: "rgba(255,255,255,.5)", borderBottom: "1px solid rgba(15,23,42,.05)" }}>
+        <BrandLogo />
         <Stack direction="row" spacing={1.5}>
           <Button component={Link} to="/login" variant="text" color="primary">התחברות</Button>
           <Button component={Link} to="/register" variant="contained">הרשמה</Button>
@@ -49,7 +52,7 @@ export default function Landing() {
             />
             <Typography variant="h2" sx={{ fontSize: { xs: 36, md: 56 }, lineHeight: 1.15, mb: 2 }}>
               לא לשכוח אף מנה.
-              <Box component="span" sx={{ display: "block", background: "linear-gradient(135deg,#0d9488,#2563eb)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              <Box component="span" sx={{ display: "block", background: "linear-gradient(135deg,#10b981,#0891b2)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 ניהול תרופות בעידן ה‑AI.
               </Box>
             </Typography>
@@ -71,9 +74,9 @@ export default function Landing() {
                 position: "relative",
                 p: 4,
                 borderRadius: 6,
-                background: "linear-gradient(135deg,#0d9488 0%,#2563eb 100%)",
+                background: "linear-gradient(135deg,#10b981 0%,#0891b2 100%)",
                 color: "#fff",
-                boxShadow: "0 30px 60px rgba(13,148,136,.35)",
+                boxShadow: "0 30px 60px rgba(16,185,129,.45)",
                 overflow: "hidden",
               }}
             >
@@ -106,7 +109,7 @@ export default function Landing() {
               <Grid size={{ xs: 12, sm: 6, md: 3 }} key={f.title}>
                 <Card sx={{ height: "100%", p: 1, transition: "transform .2s, box-shadow .2s", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 18px 36px rgba(15,23,42,.10)" } }}>
                   <CardContent>
-                    <Box sx={{ width: 48, height: 48, borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(13,148,136,.1)", color: "primary.dark", mb: 2 }}>
+                    <Box sx={{ width: 48, height: 48, borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(16,185,129,.10)", color: "primary.dark", mb: 2 }}>
                       {f.icon}
                     </Box>
                     <Typography variant="h6" sx={{ mb: 1 }}>{f.title}</Typography>
