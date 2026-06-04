@@ -129,7 +129,40 @@ export default function Register() {
   return outputArray;
 }
 
-  // פונקציה לחילוץ מפתחות ה-Push מהדפדפן לאחר אישור המשתמש
+ // פונקציה לחילוץ מפתחות ה-Push מהדפדפן לאחר אישור המשתמש
+const getPushSubscription = async () => {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    throw new Error("הדפדפן שלך אינו תומך בהתראות Push.");
+  }
+
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") {
+    throw new Error("חובה לאשר התראות דפדפן כדי להשלים את ההרשמה למערכת זו.");
+  }
+
+  const registration = await navigator.serviceWorker.ready;
+  const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: convertedVapidKey
+  });
+
+  const pushEndpoint = subscription.endpoint;
+
+  // תיקון קריטי: הפיכת ה-Base64 ל-URL-Safe והסרת ה-Padding (=)
+  const pushP256dh = btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh'))))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+
+  const pushAuth = btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+
+  return { pushEndpoint, pushP256dh, pushAuth };
+};
   // const getPushSubscription = async () => {
   //   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
   //     throw new Error("הדפדפן שלך אינו תומך בהתראות Push.");
@@ -155,67 +188,67 @@ export default function Register() {
 
   //   return { pushEndpoint, pushP256dh, pushAuth };
   // };
-const getPushSubscription = async () => {
-  console.log("1. נכנס לפונקציית ה-Push");
+// const getPushSubscription = async () => {
+//   console.log("1. נכנס לפונקציית ה-Push");
   
-  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-    throw new Error("הדפדפן שלך אינו תומך בהתראות Push.");
-  }
+//   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+//     throw new Error("הדפדפן שלך אינו תומך בהתראות Push.");
+//   }
 
-  const permission = await Notification.requestPermission();
-  console.log("2. סטטוס הרשאה מהמשתמש:", permission);
-  if (permission !== "granted") {
-    throw new Error("חובה לאשר התראות דפדפן כדי להשלים את ההרשמה.");
-  }
+//   const permission = await Notification.requestPermission();
+//   console.log("2. סטטוס הרשאה מהמשתמש:", permission);
+//   if (permission !== "granted") {
+//     throw new Error("חובה לאשר התראות דפדפן כדי להשלים את ההרשמה.");
+//   }
 
-  console.log("3. מנסה לגשת ל-Service Worker Ready...");
-  const registration = await navigator.serviceWorker.ready;
-  console.log("4. ה-Service Worker מוכן!", registration);
+//   console.log("3. מנסה לגשת ל-Service Worker Ready...");
+//   const registration = await navigator.serviceWorker.ready;
+//   console.log("4. ה-Service Worker מוכן!", registration);
 
-  const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
-  console.log("5. מפתח VAPID הומר בהצלחה!");
+//   const convertedVapidKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+//   console.log("5. מפתח VAPID הומר בהצלחה!");
 
-  console.log("6. מנסה לבצע subscribe ב-PushManager (עם הגבלת זמן)...");
+//   console.log("6. מנסה לבצע subscribe ב-PushManager (עם הגבלת זמן)...");
   
-  try {
-    // מנגנון תחרות: אם הרישום האמיתי לוקח יותר מ-2 שניות, נחתוך ל-Mock
-    const subscription = await Promise.race([
-      registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: convertedVapidKey.buffer
-      }),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Timeout: הדפדפן חסום ארגונית")), 2000)
-      )
-    ]);
+//   try {
+//     // מנגנון תחרות: אם הרישום האמיתי לוקח יותר מ-2 שניות, נחתוך ל-Mock
+//     const subscription = await Promise.race([
+//       registration.pushManager.subscribe({
+//         userVisibleOnly: true,
+//         applicationServerKey: convertedVapidKey.buffer
+//       }),
+//       new Promise((_, reject) => 
+//         setTimeout(() => reject(new Error("Timeout: הדפדפן חסום ארגונית")), 2000)
+//       )
+//     ]);
     
-    console.log("7. ה-Subscription נוצר בהצלחה אמיתית!", subscription);
+//     console.log("7. ה-Subscription נוצר בהצלחה אמיתית!", subscription);
 
-    const pushEndpoint = subscription.endpoint;
-    const pushP256dh = btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('p256dh'))))
-      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    const pushAuth = btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth'))))
-      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+//     const pushEndpoint = subscription.endpoint;
+//     const pushP256dh = btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('p256dh'))))
+//       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+//     const pushAuth = btoa(String.fromCharCode(...new Uint8Array(subscription.getKey('auth'))))
+//       .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
-    return { pushEndpoint, pushP256dh, pushAuth };
+//     return { pushEndpoint, pushP256dh, pushAuth };
 
-  } catch (error) {
-    console.warn("⚠️ הדפדפן תקוע או חסום ארגונית. מעביר לנתוני Mock כדי להשלים הרשמה בשרת!");
+//   } catch (error) {
+//     console.warn("⚠️ הדפדפן תקוע או חסום ארגונית. מעביר לנתוני Mock כדי להשלים הרשמה בשרת!");
     
-    // נתוני דמה תקינים במבנה עבור שרת ה-Java שלכם
-    const mockEndpoint = `https://fcm.googleapis.com/fcm/send/mock-token-${Math.random().toString(36).substring(7)}`;
-    const mockP256dh = "BMTuA_CYg660S4S7B6v-9V38_Z_wV5Y6A7C_b-W1gR_2O3W7U48E_SAMPLE_KEY";
-    const mockAuth = "xF92b_SAMPLE_AUTH_KEY==";
+//     // נתוני דמה תקינים במבנה עבור שרת ה-Java שלכם
+//     const mockEndpoint = `https://fcm.googleapis.com/fcm/send/mock-token-${Math.random().toString(36).substring(7)}`;
+//     const mockP256dh = "BMTuA_CYg660S4S7B6v-9V38_Z_wV5Y6A7C_b-W1gR_2O3W7U48E_SAMPLE_KEY";
+//     const mockAuth = "xF92b_SAMPLE_AUTH_KEY==";
 
-    console.log("7 [MOCK]. נתוני דמה מוכנים לשליחה!");
+//     console.log("7 [MOCK]. נתוני דמה מוכנים לשליחה!");
     
-    return { 
-      pushEndpoint: mockEndpoint, 
-      pushP256dh: mockP256dh, 
-      pushAuth: mockAuth 
-    };
-  }
-};
+//     return { 
+//       pushEndpoint: mockEndpoint, 
+//       pushP256dh: mockP256dh, 
+//       pushAuth: mockAuth 
+//     };
+//   }
+// };
 
   // שלב 1: כשהמשתמש לוחץ על כפתור הטופס (הוולידציה של ה-React עברה)
   const handlePreSubmit = () => {
