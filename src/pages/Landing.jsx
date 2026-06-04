@@ -52,7 +52,7 @@ export default function Landing() {
             />
             <Typography variant="h2" sx={{ fontSize: { xs: 36, md: 56 }, lineHeight: 1.15, mb: 2 }}>
               לא לשכוח אף מנה.
-              <Box component="span" sx={{ display: "block", background: "linear-gradient(135deg,#0d9488,#2563eb)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              <Box component="span" sx={{ display: "block", background: "linear-gradient(135deg,#10b981,#0891b2)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 ניהול תרופות בעידן ה‑AI.
               </Box>
             </Typography>
@@ -74,9 +74,9 @@ export default function Landing() {
                 position: "relative",
                 p: 4,
                 borderRadius: 6,
-                background: "linear-gradient(135deg,#0d9488 0%,#2563eb 100%)",
+                background: "linear-gradient(135deg,#10b981 0%,#0891b2 100%)",
                 color: "#fff",
-                boxShadow: "0 30px 60px rgba(13,148,136,.35)",
+                boxShadow: "0 30px 60px rgba(16,185,129,.45)",
                 overflow: "hidden",
               }}
             >
@@ -109,7 +109,7 @@ export default function Landing() {
               <Grid size={{ xs: 12, sm: 6, md: 3 }} key={f.title}>
                 <Card sx={{ height: "100%", p: 1, transition: "transform .2s, box-shadow .2s", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 18px 36px rgba(15,23,42,.10)" } }}>
                   <CardContent>
-                    <Box sx={{ width: 48, height: 48, borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(13,148,136,.1)", color: "primary.dark", mb: 2 }}>
+                    <Box sx={{ width: 48, height: 48, borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(16,185,129,.10)", color: "primary.dark", mb: 2 }}>
                       {f.icon}
                     </Box>
                     <Typography variant="h6" sx={{ mb: 1 }}>{f.title}</Typography>

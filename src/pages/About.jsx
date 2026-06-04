@@ -32,7 +32,7 @@ export default function About() {
             <Card sx={{ height: "100%", transition: "transform .2s, box-shadow .2s", "&:hover": { transform: "translateY(-4px)", boxShadow: "0 18px 36px rgba(15,23,42,.10)" } }}>
               <CardContent>
                 <Stack direction="row" spacing={2} alignItems="flex-start">
-                  <Avatar sx={{ bgcolor: "rgba(13,148,136,.12)", color: "primary.dark" }}>{it.icon}</Avatar>
+                  <Avatar sx={{ bgcolor: "rgba(16,185,129,.12)", color: "primary.dark" }}>{it.icon}</Avatar>
                   <Box>
                     <Typography variant="h6" sx={{ mb: .5 }}>{it.title}</Typography>
                     <Typography variant="body2" color="text.secondary">{it.desc}</Typography>
@@ -47,8 +47,8 @@ export default function About() {
       <Box
         sx={{
           mt: 8, p: { xs: 4, md: 6 }, borderRadius: 5, textAlign: "center", color: "#fff",
-          background: "linear-gradient(135deg,#0d9488 0%,#2563eb 100%)",
-          boxShadow: "0 30px 60px rgba(13,148,136,.25)",
+          background: "linear-gradient(135deg,#10b981 0%,#0891b2 100%)",
+          boxShadow: "0 30px 60px rgba(16,185,129,.35)",
         }}
       >
         <Typography variant="h4" sx={{ mb: 1, fontWeight: 800 }}>החזון שלנו</Typography>
