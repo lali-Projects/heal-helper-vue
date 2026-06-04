@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Box, Button, Typography, CircularProgress, Alert } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import Navbar from "../components/Navbar";
 import MedicationCard from "../components/MedicationCard";
 import MedicationFormDialog from "../components/MedicationFormDialog";
 import ImageAnalyzeUploader from "../components/ImageAnalyzeUploader";
