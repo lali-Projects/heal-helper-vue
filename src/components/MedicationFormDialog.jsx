@@ -1,61 +1,125 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControlLabel, Switch } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControlLabel, Switch, Box, Typography, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useForm, Controller } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectUser } from "../features/auth/authSlice";
-import { useCreateMedicationMutation, useUpdateMedicationMutation } from "../features/apiSlice";
+import {
+  useCreateMedicationMutation,
+  useUpdateMedicationMutation,
+  useCreateMedicationScheduleMutation,
+} from "../features/apiSlice";
+
+const toHHmmss = (t) => {
+  if (!t) return "08:00:00";
+  // accept "HH:mm" or "HH:mm:ss"
+  const parts = t.split(":");
+  if (parts.length === 2) return `${t}:00`;
+  return t;
+};
+
+const toHHmm = (t) => {
+  if (!t) return "";
+  const parts = t.split(":");
+  return `${parts[0]}:${parts[1] ?? "00"}`;
+};
 
 export default function MedicationFormDialog({ open, onClose, initial }) {
   const user = useSelector(selectUser);
   const [createMed, { isLoading: creating }] = useCreateMedicationMutation();
   const [updateMed, { isLoading: updating }] = useUpdateMedicationMutation();
+  const [createSchedule, { isLoading: schedSaving }] = useCreateMedicationScheduleMutation();
 
   const today = new Date().toISOString().slice(0, 10);
 
-  const { control, register, handleSubmit, reset, formState: { errors } } = useForm({
+  const [times, setTimes] = useState([]);
+
+  const { control, register, handleSubmit, reset, watch, formState: { errors } } = useForm({
     defaultValues: { name: "", dosage: "", dosagePerDay: 1, endDate: "", fixedSchedule: false },
   });
 
-useEffect(() => {
-  if (open) {
-    reset({
-      // אם קיים medicine_name (מהשרת), נשתמש בו, אחרת ב-name (מעריכה רגילה)
-      name: initial?.medicine_name || initial?.name || "",
-      
-      dosage: initial?.dosage || "",
-      
-      // אם קיים frequency (מהשרת), נשתמש בו, אחרת ב-dosagePerDay (מעריכה רגילה)
-      dosagePerDay: initial?.frequency || initial?.dosagePerDay || 1,
-      
-      endDate: initial?.endDate || "",
-      
-      fixedSchedule: initial?.fixedSchedule || false,
-    });
-  }
-}, [open, initial, reset]);
+  const dosagePerDay = Number(watch("dosagePerDay")) || 1;
 
-  const onSubmit = async (values) => {
-  const payload = {
-    name: values.name,
-    dosage: values.dosage,
-    frequency: Number(values.dosagePerDay), 
-    endDate: values.endDate,
-    fixedSchedule: values.fixedSchedule,
-    user: { id: user.id },
+  useEffect(() => {
+    if (open) {
+      const freq = initial?.frequency || initial?.dosagePerDay || 1;
+      reset({
+        name: initial?.medicine_name || initial?.name || "",
+        dosage: initial?.dosage || "",
+        dosagePerDay: freq,
+        endDate: initial?.endDate || "",
+        fixedSchedule: initial?.fixedSchedule || false,
+      });
+
+      // populate existing schedule times if editing
+      const existing = (initial?.schedules || []).map((s) => toHHmm(s.timeOfDay));
+      const initialTimes = [];
+      for (let i = 0; i < freq; i++) {
+        initialTimes.push(existing[i] || "08:00");
+      }
+      setTimes(initialTimes);
+    }
+  }, [open, initial, reset]);
+
+  // Resize times array when dosagePerDay changes
+  useEffect(() => {
+    setTimes((prev) => {
+      const next = [...prev];
+      if (dosagePerDay > next.length) {
+        while (next.length < dosagePerDay) next.push("08:00");
+      } else if (dosagePerDay < next.length) {
+        next.length = dosagePerDay;
+      }
+      return next;
+    });
+  }, [dosagePerDay]);
+
+  const updateTimeAt = (idx, val) => {
+    setTimes((prev) => prev.map((t, i) => (i === idx ? val : t)));
   };
 
-  try {
-    if (initial?.id) {
-      await updateMed({ id: initial.id, body: payload }).unwrap();
-    } else {
-      await createMed(payload).unwrap();
+  const onSubmit = async (values) => {
+    const payload = {
+      name: values.name,
+      dosage: values.dosage,
+      frequency: Number(values.dosagePerDay),
+      endDate: values.endDate,
+      fixedSchedule: values.fixedSchedule,
+      user: { id: user.id },
+    };
+
+    try {
+      // Step A: save/update medication
+      let savedMed;
+      if (initial?.id) {
+        savedMed = await updateMed({ id: initial.id, body: payload }).unwrap();
+        // updateMed may not return body — fall back to initial.id
+        if (!savedMed || !savedMed.id) savedMed = { ...payload, id: initial.id };
+      } else {
+        savedMed = await createMed(payload).unwrap();
+      }
+
+      const medId = savedMed?.id ?? initial?.id;
+
+      // Step B: create a schedule entry for each selected time
+      if (medId && times.length) {
+        for (const t of times) {
+          if (!t) continue;
+          await createSchedule({
+            medication: { id: medId },
+            user: { id: user.id },
+            timeOfDay: toHHmmss(t),
+            isTake: true,
+          }).unwrap();
+        }
+      }
+
+      onClose();
+    } catch (error) {
+      console.error("Failed to save medication:", error);
+      alert(error?.data?.message || error?.data || "שגיאה בשמירת התרופה");
     }
-    onClose();
-  } catch (error) {
-    console.error("Failed to save medication:", error);
-    alert(error?.data?.message || "שגיאה בשמירת התרופה");
-  }
-};
+  };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm" dir="rtl">
@@ -113,10 +177,29 @@ useEffect(() => {
               />
             )}
           />
+
+          <Box mt={2}>
+            <Typography variant="subtitle1" gutterBottom>
+              זמני נטילה
+            </Typography>
+            {times.map((t, idx) => (
+              <Box key={idx} display="flex" alignItems="center" gap={1} mb={1}>
+                <TextField
+                  type="time"
+                  label={`מנה ${idx + 1}`}
+                  value={t}
+                  onChange={(e) => updateTimeAt(idx, e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{ step: 60 }}
+                  fullWidth
+                />
+              </Box>
+            ))}
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>ביטול</Button>
-          <Button type="submit" variant="contained" disabled={creating || updating}>
+          <Button type="submit" variant="contained" disabled={creating || updating || schedSaving}>
             שמירה
           </Button>
         </DialogActions>
