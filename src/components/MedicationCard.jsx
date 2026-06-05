@@ -14,7 +14,6 @@ const formatTime = (t) => {
 export default function MedicationCard({ med, onEdit, onDelete }) {
   const frequency = med.frequency ?? med.dosagePerDay;
   const schedules = med.schedules || [];
-
   return (
     <Card elevation={0} sx={{ position: "relative", overflow: "hidden" }}>
       <Box sx={{ position: "absolute", top: 0, left: 0, right: 0, height: 4,
