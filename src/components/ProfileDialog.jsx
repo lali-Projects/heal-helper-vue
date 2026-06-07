@@ -1,10 +1,11 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControlLabel, Switch, Alert, Box } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControlLabel, Switch, Alert, Box, Stack } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectEmail, selectUser, setCredentials, setUser } from "../features/auth/authSlice";
 import { useUpdateUserByEmailMutation } from "../features/apiSlice";
 import { getPushTokens } from "../hooks/useNotification";
+import { useNotificationManager } from "../hooks/useNotificationManager";
 
 export default function ProfileDialog({ open, onClose }) {
   const user = useSelector(selectUser);
