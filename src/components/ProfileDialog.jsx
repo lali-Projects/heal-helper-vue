@@ -14,6 +14,7 @@ export default function ProfileDialog({ open, onClose }) {
   const [updateUser, { isLoading }] = useUpdateUserByEmailMutation();
   const [updateDevice, setUpdateDevice] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const { isInactive, isSyncing, error: syncError, transferDevice } = useNotificationManager();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: { name: "", email: "" },
