@@ -72,6 +72,31 @@ export default function ProfileDialog({ open, onClose }) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           {errorMsg && <Alert severity="error" sx={{ mb: 2 }}>{errorMsg}</Alert>}
+          {syncError && <Alert severity="warning" sx={{ mb: 2 }}>{syncError}</Alert>}
+          {isInactive && (
+            <Alert
+              severity="warning"
+              sx={{ mb: 2 }}
+              action={
+                <Button
+                  color="inherit"
+                  size="small"
+                  disabled={isSyncing}
+                  onClick={async () => {
+                    try {
+                      await transferDevice({ refreshPushTokens: true, reload: true });
+                    } catch {
+                      /* error surfaced via syncError */
+                    }
+                  }}
+                >
+                  {isSyncing ? "מסנכרן..." : "הפעל מכשיר זה"}
+                </Button>
+              }
+            >
+              מכשיר זה אינו פעיל לקבלת התראות. ניתן להעביר את ההתראות למכשיר הנוכחי.
+            </Alert>
+          )}
           <Box display="flex" flexDirection="column" gap={2}>
             <TextField
               label="שם"
