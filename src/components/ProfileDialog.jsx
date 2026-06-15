@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectEmail, selectUser, setCredentials, setUser } from "../features/auth/authSlice";
 import { useUpdateUserByEmailMutation } from "../features/apiSlice";
 import { getPushTokens } from "../hooks/useNotification";
-import { useNotificationManager } from "../hooks/useNotificationManager";
 
 export default function ProfileDialog({ open, onClose }) {
   const user = useSelector(selectUser);
@@ -14,7 +13,6 @@ export default function ProfileDialog({ open, onClose }) {
   const [updateUser, { isLoading }] = useUpdateUserByEmailMutation();
   const [updateDevice, setUpdateDevice] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const { isInactive, isSyncing, error: syncError, transferDevice } = useNotificationManager();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: { name: "", email: "" },
@@ -72,31 +70,6 @@ export default function ProfileDialog({ open, onClose }) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           {errorMsg && <Alert severity="error" sx={{ mb: 2 }}>{errorMsg}</Alert>}
-          {syncError && <Alert severity="warning" sx={{ mb: 2 }}>{syncError}</Alert>}
-          {isInactive && (
-            <Alert
-              severity="warning"
-              sx={{ mb: 2 }}
-              action={
-                <Button
-                  color="inherit"
-                  size="small"
-                  disabled={isSyncing}
-                  onClick={async () => {
-                    try {
-                      await transferDevice({ refreshPushTokens: true, reload: true });
-                    } catch {
-                      /* error surfaced via syncError */
-                    }
-                  }}
-                >
-                  {isSyncing ? "מסנכרן..." : "הפעל מכשיר זה"}
-                </Button>
-              }
-            >
-              מכשיר זה אינו פעיל לקבלת התראות. ניתן להעביר את ההתראות למכשיר הנוכחי.
-            </Alert>
-          )}
           <Box display="flex" flexDirection="column" gap={2}>
             <TextField
               label="שם"
